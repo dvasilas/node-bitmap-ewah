@@ -16,6 +16,8 @@ void EWAHBitMap::Init() {
     tpl->SetClassName(Nan::New("EWAHBitMap").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
+    Nan::SetPrototypeMethod(tpl, "push", Push);
+
     constructor_template.Reset(tpl);
     constructor.Reset(tpl->GetFunction());
 }
@@ -35,4 +37,17 @@ Local<Object> EWAHBitMap::NewInstance(Local<Value> arg) {
     Local<Function> cons = Nan::New<Function>(constructor);
     Local<Object> instance = cons->NewInstance(argc, argv);
     return scope.Escape(instance);
+}
+
+NAN_METHOD(EWAHBitMap::Push) {
+    Nan::HandleScope scope;
+
+    EWAHBitMap *ewahbitmap = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+    if (info.Length() < 1) {
+        Nan::ThrowError("Wrong number of arguments");
+    }
+    if (!info[0]->IsNumber()) {
+        Nan::ThrowError("Arguments must be a bit position");
+    }
+    ewahbitmap->set(info[0]->NumberValue());
 }

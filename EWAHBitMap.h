@@ -28,6 +28,7 @@ public:
     static Nan::Persistent<v8::FunctionTemplate> constructor_template;
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static v8::Local<v8::Object> NewInstance(v8::Local<v8::Value> arg);
+    static NAN_METHOD(Push);
 };
 
 #endif
