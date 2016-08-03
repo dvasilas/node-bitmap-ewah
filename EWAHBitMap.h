@@ -8,6 +8,7 @@
 class EWAHBitMap : public Nan::ObjectWrap {
 private:
     typedef EWAHBoolArray<> ewahboolarray;
+    typedef ewahboolarray::const_iterator ewahboolarray_const_iterator;
     ewahboolarray boolArray;
 
     void set(unsigned i) {
@@ -29,6 +30,7 @@ public:
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static v8::Local<v8::Object> NewInstance(v8::Local<v8::Value> arg);
     static NAN_METHOD(Push);
+    static NAN_METHOD(ToString);
 };
 
 #endif

@@ -17,6 +17,7 @@ void EWAHBitMap::Init() {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     Nan::SetPrototypeMethod(tpl, "push", Push);
+    Nan::SetPrototypeMethod(tpl, "toString", ToString);
 
     constructor_template.Reset(tpl);
     constructor.Reset(tpl->GetFunction());
@@ -50,4 +51,25 @@ NAN_METHOD(EWAHBitMap::Push) {
         Nan::ThrowError("Arguments must be a bit position");
     }
     ewahbitmap->set(info[0]->NumberValue());
+}
+
+NAN_METHOD(EWAHBitMap::ToString) {
+    Nan::HandleScope scope;
+
+    Handle<String> delimiter = Nan::New<String>(",").ToLocalChecked();
+    char *strDelimiter = new char[delimiter->Utf8Length()];
+    delimiter->WriteUtf8(strDelimiter);
+
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+    const ewahboolarray& ewahBoolArray = that->getImmutableArray();
+    ewahboolarray_const_iterator it = ewahBoolArray.begin();
+
+    std::stringstream resultStream;
+    for (resultStream <<  *it++; it != ewahBoolArray.end(); ++it) {
+        resultStream << strDelimiter;
+        resultStream << *it;
+    }
+    delete strDelimiter;
+    Handle<String> strResult = Nan::New<String>(resultStream.str()).ToLocalChecked();
+    info.GetReturnValue().Set(strResult);
 }
