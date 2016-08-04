@@ -56,7 +56,12 @@ NAN_METHOD(EWAHBitMap::Push) {
 NAN_METHOD(EWAHBitMap::ToString) {
     Nan::HandleScope scope;
 
-    Handle<String> delimiter = Nan::New<String>(",").ToLocalChecked();
+    if (info.Length() != 1)
+        Nan::ThrowError("Wrong number of arguments");
+    if ((!info[0]->IsString()) || ((info[0]->ToString())->Length() < 1))
+        Nan::ThrowError("Argument should be a non-empty string");
+
+    Handle<String> delimiter = info[0]->ToString();
     char *strDelimiter = new char[delimiter->Utf8Length()];
     delimiter->WriteUtf8(strDelimiter);
 
