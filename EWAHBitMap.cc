@@ -18,6 +18,7 @@ void EWAHBitMap::Init() {
 
     Nan::SetPrototypeMethod(tpl, "push", Push);
     Nan::SetPrototypeMethod(tpl, "toString", ToString);
+    Nan::SetPrototypeMethod(tpl, "length", Length);
 
     constructor_template.Reset(tpl);
     constructor.Reset(tpl->GetFunction());
@@ -77,4 +78,11 @@ NAN_METHOD(EWAHBitMap::ToString) {
     delete strDelimiter;
     Handle<String> strResult = Nan::New<String>(resultStream.str()).ToLocalChecked();
     info.GetReturnValue().Set(strResult);
+}
+
+NAN_METHOD(EWAHBitMap::Length) {
+    Nan::HandleScope scope;
+
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+    info.GetReturnValue().Set(Nan::New<Number>(that->getImmutableArray().sizeInBits()));
 }

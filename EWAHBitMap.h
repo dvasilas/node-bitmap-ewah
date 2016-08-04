@@ -31,6 +31,7 @@ public:
     static v8::Local<v8::Object> NewInstance(v8::Local<v8::Value> arg);
     static NAN_METHOD(Push);
     static NAN_METHOD(ToString);
+    static NAN_METHOD(Length);
 };
 
 #endif
