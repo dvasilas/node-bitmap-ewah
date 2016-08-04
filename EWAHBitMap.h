@@ -32,6 +32,8 @@ public:
     static NAN_METHOD(Push);
     static NAN_METHOD(ToString);
     static NAN_METHOD(Length);
+    static NAN_METHOD(NumberOfOnes);
+    static NAN_METHOD(Map);
 };
 
 #endif

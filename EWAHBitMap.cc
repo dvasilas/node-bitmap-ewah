@@ -19,6 +19,8 @@ void EWAHBitMap::Init() {
     Nan::SetPrototypeMethod(tpl, "push", Push);
     Nan::SetPrototypeMethod(tpl, "toString", ToString);
     Nan::SetPrototypeMethod(tpl, "length", Length);
+    Nan::SetPrototypeMethod(tpl, "numberOfOnes", NumberOfOnes);
+    Nan::SetPrototypeMethod(tpl, "map", Map);
 
     constructor_template.Reset(tpl);
     constructor.Reset(tpl->GetFunction());
@@ -34,10 +36,9 @@ void EWAHBitMap::New(const Nan::FunctionCallbackInfo<Value>& info) {
 
 Local<Object> EWAHBitMap::NewInstance(Local<Value> arg) {
     Nan::EscapableHandleScope scope;
-    const unsigned argc = 1;
-    Local<Value> argv[argc] = { arg };
+    Local<Value> argv[1] = { arg };
     Local<Function> cons = Nan::New<Function>(constructor);
-    Local<Object> instance = cons->NewInstance(argc, argv);
+    Local<Object> instance = cons->NewInstance(1, argv);
     return scope.Escape(instance);
 }
 
@@ -68,9 +69,9 @@ NAN_METHOD(EWAHBitMap::ToString) {
 
     EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
     const ewahboolarray& ewahBoolArray = that->getImmutableArray();
-    ewahboolarray_const_iterator it = ewahBoolArray.begin();
 
-    std::stringstream resultStream;
+    stringstream resultStream;
+    ewahboolarray_const_iterator it = ewahBoolArray.begin();
     for (resultStream <<  *it++; it != ewahBoolArray.end(); ++it) {
         resultStream << strDelimiter;
         resultStream << *it;
@@ -85,4 +86,32 @@ NAN_METHOD(EWAHBitMap::Length) {
 
     EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
     info.GetReturnValue().Set(Nan::New<Number>(that->getImmutableArray().sizeInBits()));
+}
+
+NAN_METHOD(EWAHBitMap::NumberOfOnes) {
+    Nan::HandleScope scope;
+
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+    info.GetReturnValue().Set(Nan::New<Number>(that->getImmutableArray().numberOfOnes()));
+}
+
+NAN_METHOD(EWAHBitMap::Map) {
+    Nan::HandleScope scope;
+
+    if (info.Length()<1)
+        Nan::ThrowError("Wrong number of arguments");
+    if (!info[0]->IsFunction())
+        Nan::ThrowError("Wrong type of arguments (argument shoudld be a function)");
+
+    Handle<Array> resultArray = Nan::New<Array>();
+    Local<Function> callback = Local<Function>::Cast(info[0]);
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+    const ewahboolarray& ewahBoolArray = that->getImmutableArray();
+	unsigned i = 0;
+    for (ewahboolarray_const_iterator it = ewahBoolArray.begin(); it != ewahBoolArray.end(); ++it) {
+        Local<Value> info[1] = { Nan::New<Number>(*it) };
+        Local<Value> elem = callback->Call(v8::Isolate::GetCurrent()->GetCurrentContext()->Global(), 1, info);
+        resultArray->Set(i++, elem);
+    }
+    info.GetReturnValue().Set(resultArray);
 }
