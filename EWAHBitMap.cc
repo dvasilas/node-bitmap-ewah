@@ -21,6 +21,8 @@ void EWAHBitMap::Init() {
     Nan::SetPrototypeMethod(tpl, "length", Length);
     Nan::SetPrototypeMethod(tpl, "numberOfOnes", NumberOfOnes);
     Nan::SetPrototypeMethod(tpl, "map", Map);
+    Nan::SetPrototypeMethod(tpl, "or", Or);
+    Nan::SetPrototypeMethod(tpl, "and", And);
 
     constructor_template.Reset(tpl);
     constructor.Reset(tpl->GetFunction());
@@ -114,4 +116,46 @@ NAN_METHOD(EWAHBitMap::Map) {
         resultArray->Set(i++, elem);
     }
     info.GetReturnValue().Set(resultArray);
+}
+
+NAN_METHOD(EWAHBitMap::Or) {
+    Nan::HandleScope scope;
+
+    if (info.Length() < 1)
+        Nan::ThrowError("Wrong number of arguments");
+    if (!info[0]->IsObject())
+        Nan::ThrowError("Wrong type of argument");
+
+    EWAHBitMap* rightOperand = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info[0]->ToObject());
+    if (rightOperand == NULL)
+        Nan::ThrowError("Cannot cast arguments to ");
+
+    Handle<Value> resultInst = EWAHBitMap::NewInstance(info[0]);
+    EWAHBitMap* resultOrject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(resultInst->ToObject());
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+
+    that->getMutableArray().logicalor(rightOperand->getMutableArray(), resultOrject->getMutableArray());
+
+    info.GetReturnValue().Set(resultInst);
+}
+
+NAN_METHOD(EWAHBitMap::And) {
+    Nan::HandleScope scope;
+
+    if (info.Length() < 1)
+        Nan::ThrowError("Wrong number of arguments");
+    if (!info[0]->IsObject())
+        Nan::ThrowError("Wrong type of argument");
+
+    EWAHBitMap* rightOperand = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info[0]->ToObject());
+    if (rightOperand == NULL)
+        Nan::ThrowError("Cannot cast arguments to ");
+
+    Handle<Value> resultInst = EWAHBitMap::NewInstance(info[0]);
+    EWAHBitMap* resultOrject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(resultInst->ToObject());
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+
+    that->getMutableArray().logicaland(rightOperand->getMutableArray(), resultOrject->getMutableArray());
+
+    info.GetReturnValue().Set(resultInst);
 }
