@@ -1,8 +1,6 @@
 #include <v8.h>
 #include <nan.h>
 #include <node.h>
-#include <node_buffer.h>
-#include <unistd.h>
 #include "EWAHBitMap.h"
 #include "src/EWAHBoolArray/headers/ewah.h"
 
