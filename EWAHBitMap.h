@@ -36,6 +36,8 @@ public:
     static NAN_METHOD(Map);
     static NAN_METHOD(Or);
     static NAN_METHOD(And);
+    static NAN_METHOD(Write);
+    static NAN_METHOD(Read);
 };
 
 #endif

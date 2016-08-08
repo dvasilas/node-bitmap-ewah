@@ -1,10 +1,14 @@
+#include <v8.h>
 #include <nan.h>
 #include <node.h>
+#include <node_buffer.h>
+#include <unistd.h>
 #include "EWAHBitMap.h"
 #include "src/EWAHBoolArray/headers/ewah.h"
 
 using namespace v8;
 using namespace std;
+using namespace node;
 
 Nan::Persistent<Function> EWAHBitMap::constructor;
 Nan::Persistent<FunctionTemplate> EWAHBitMap::constructor_template;
@@ -23,6 +27,8 @@ void EWAHBitMap::Init() {
     Nan::SetPrototypeMethod(tpl, "map", Map);
     Nan::SetPrototypeMethod(tpl, "or", Or);
     Nan::SetPrototypeMethod(tpl, "and", And);
+    Nan::SetPrototypeMethod(tpl, "read", Read);
+    Nan::SetPrototypeMethod(tpl, "write", Write);
 
     constructor_template.Reset(tpl);
     constructor.Reset(tpl->GetFunction());
@@ -158,4 +164,45 @@ NAN_METHOD(EWAHBitMap::And) {
     that->getMutableArray().logicaland(rightOperand->getMutableArray(), resultOrject->getMutableArray());
 
     info.GetReturnValue().Set(resultInst);
+}
+
+NAN_METHOD(EWAHBitMap::Write) {
+    Nan::HandleScope scope;
+
+    stringstream writebuf;
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+    Handle<Value> sizeInBits = Nan::New<Number>(that->getMutableArray().sizeInBits());
+    Handle<Value> bufferSize = Nan::New<Number>(that->getMutableArray().bufferSize());
+    that->getMutableArray().writeBuffer(writebuf);
+
+    string str = writebuf.str();
+    char *binaryBuff = new char[str.length()+1];
+    for (size_t i=0; i<str.length(); i++)
+        binaryBuff[i] = str[i];
+
+    Local<Value> buffer = Nan::CopyBuffer(binaryBuff, writebuf.str().length()).ToLocalChecked();
+    Handle<Array> resultArray = Nan::New<Array>();
+    resultArray->Set(0, sizeInBits);
+    resultArray->Set(1, bufferSize);
+    resultArray->Set(2, buffer);
+
+    info.GetReturnValue().Set(resultArray);
+}
+
+NAN_METHOD(EWAHBitMap::Read) {
+    Nan::HandleScope scope;
+
+    Local<Array> input = Local<Array>::Cast(info[0]);
+    size_t sizeInBits = Local<Value>::Cast(input->Get(0))->NumberValue();
+    size_t bufferSize = Local<Value>::Cast(input->Get(1))->NumberValue();
+    Local<Object> bufferObject = Local<Object>::Cast(input->Get(2));
+    char* bufferData = Buffer::Data(bufferObject);
+    int bufferLength = Buffer::Length(bufferObject);
+
+    stringstream readbuf;
+    for (int i=0; i<bufferLength; i++)
+        readbuf << bufferData[i];
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+    that->getMutableArray().readBuffer(readbuf,bufferSize);
+    that->getMutableArray().setSizeInBits(sizeInBits);
 }
