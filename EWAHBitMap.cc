@@ -25,6 +25,7 @@ void EWAHBitMap::Init() {
     Nan::SetPrototypeMethod(tpl, "map", Map);
     Nan::SetPrototypeMethod(tpl, "or", Or);
     Nan::SetPrototypeMethod(tpl, "and", And);
+    Nan::SetPrototypeMethod(tpl, "not", Not);
     Nan::SetPrototypeMethod(tpl, "read", Read);
     Nan::SetPrototypeMethod(tpl, "write", Write);
 
@@ -163,6 +164,19 @@ NAN_METHOD(EWAHBitMap::And) {
 
     info.GetReturnValue().Set(resultInst);
 }
+
+NAN_METHOD(EWAHBitMap::Not) {
+    Nan::HandleScope scope;
+
+    Handle<Value> resultInst = EWAHBitMap::NewInstance(info[0]);
+    EWAHBitMap* resultOrject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(resultInst->ToObject());
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+
+    that->getMutableArray().logicalnot(resultOrject->getMutableArray());
+
+    info.GetReturnValue().Set(resultInst);
+}
+
 
 NAN_METHOD(EWAHBitMap::Write) {
     Nan::HandleScope scope;
