@@ -25,6 +25,7 @@ void EWAHBitMap::Init() {
     Nan::SetPrototypeMethod(tpl, "map", Map);
     Nan::SetPrototypeMethod(tpl, "or", Or);
     Nan::SetPrototypeMethod(tpl, "and", And);
+    Nan::SetPrototypeMethod(tpl, "xor", Xor);
     Nan::SetPrototypeMethod(tpl, "not", Not);
     Nan::SetPrototypeMethod(tpl, "read", Read);
     Nan::SetPrototypeMethod(tpl, "write", Write);
@@ -164,6 +165,28 @@ NAN_METHOD(EWAHBitMap::And) {
 
     info.GetReturnValue().Set(resultInst);
 }
+
+NAN_METHOD(EWAHBitMap::Xor) {
+    Nan::HandleScope scope;
+
+    if (info.Length() < 1)
+        Nan::ThrowError("Wrong number of arguments");
+    if (!info[0]->IsObject())
+        Nan::ThrowError("Wrong type of argument");
+
+    EWAHBitMap* rightOperand = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info[0]->ToObject());
+    if (rightOperand == NULL)
+        Nan::ThrowError("Cannot cast arguments to ");
+
+    Handle<Value> resultInst = EWAHBitMap::NewInstance(info[0]);
+    EWAHBitMap* resultOrject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(resultInst->ToObject());
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
+
+    that->getMutableArray().logicalxor(rightOperand->getMutableArray(), resultOrject->getMutableArray());
+
+    info.GetReturnValue().Set(resultInst);
+}
+
 
 NAN_METHOD(EWAHBitMap::Not) {
     Nan::HandleScope scope;
