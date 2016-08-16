@@ -40,6 +40,7 @@ public:
     static NAN_METHOD(Not);
     static NAN_METHOD(Write);
     static NAN_METHOD(Read);
+    static NAN_METHOD(CopyAndSet);
 };
 
 #endif
