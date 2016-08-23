@@ -29,7 +29,7 @@ void EWAHBitMap::Init() {
     Nan::SetPrototypeMethod(tpl, "not", Not);
     Nan::SetPrototypeMethod(tpl, "read", Read);
     Nan::SetPrototypeMethod(tpl, "write", Write);
-    Nan::SetPrototypeMethod(tpl, "copyandset", CopyAndSet);
+    Nan::SetPrototypeMethod(tpl, "set", Set);
 
     constructor_template.Reset(tpl);
     constructor.Reset(tpl->GetFunction());
@@ -64,7 +64,7 @@ NAN_METHOD(EWAHBitMap::Push) {
     ewahbitmap->set(info[0]->NumberValue());
 }
 
-NAN_METHOD(EWAHBitMap::CopyAndSet) {
+NAN_METHOD(EWAHBitMap::Set) {
     Nan::HandleScope scope;
 
     if (info.Length() < 1) {
@@ -75,16 +75,16 @@ NAN_METHOD(EWAHBitMap::CopyAndSet) {
     }
 
     EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
-    const ewahboolarray& ewahBoolArray = that->getImmutableArray();
 
     Handle<Value> resultInst = EWAHBitMap::NewInstance(info[0]);
     EWAHBitMap* resultObject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(resultInst->ToObject());
-    for (ewahboolarray_const_iterator it = ewahBoolArray.begin(); it != ewahBoolArray.end(); ++it) {
-        if (*it > info[0]->NumberValue())
-            resultObject->set(info[0]->NumberValue());
-        resultObject->set(*it);
-    }
-    info[0] = resultInst;
+
+    Handle<Value> tmpInst = EWAHBitMap::NewInstance(info[0]);
+    EWAHBitMap* tmpObject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(tmpInst->ToObject());
+    tmpObject->set(info[0]->NumberValue());
+
+    that->getMutableArray().logicalor(tmpObject->getMutableArray(), resultObject->getMutableArray());
+
     info.GetReturnValue().Set(resultInst);
 }
 
@@ -212,7 +212,6 @@ NAN_METHOD(EWAHBitMap::Xor) {
     info.GetReturnValue().Set(resultInst);
 }
 
-
 NAN_METHOD(EWAHBitMap::Not) {
     Nan::HandleScope scope;
 
@@ -224,7 +223,6 @@ NAN_METHOD(EWAHBitMap::Not) {
 
     info.GetReturnValue().Set(resultInst);
 }
-
 
 NAN_METHOD(EWAHBitMap::Write) {
     Nan::HandleScope scope;
