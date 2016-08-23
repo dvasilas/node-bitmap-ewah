@@ -57,10 +57,12 @@ NAN_METHOD(EWAHBitMap::Push) {
 
     EWAHBitMap *ewahbitmap = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
     if (info.Length() < 1) {
-        Nan::ThrowError("Wrong number of arguments");
+        Nan::ThrowTypeError("Wrong number of arguments");
+        return ;
     }
     if (!info[0]->IsNumber()) {
-        Nan::ThrowError("Arguments must be a bit position");
+        Nan::ThrowTypeError("Arguments must be a bit position");
+        return ;
     }
     ewahbitmap->set(info[0]->NumberValue());
 }
@@ -69,10 +71,12 @@ NAN_METHOD(EWAHBitMap::Set) {
     Nan::HandleScope scope;
 
     if (info.Length() < 1) {
-        Nan::ThrowError("Wrong number of arguments");
+        Nan::ThrowTypeError("Wrong number of arguments");
+        return ;
     }
     if (!info[0]->IsNumber()) {
-        Nan::ThrowError("Arguments must be a bit position");
+        Nan::ThrowTypeError("Arguments must be a bit position");
+        return ;
     }
 
     EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
@@ -94,9 +98,11 @@ NAN_METHOD(EWAHBitMap::Unset) {
 
     if (info.Length() < 1) {
         Nan::ThrowTypeError("Wrong number of arguments");
+        return ;
     }
     if (!info[0]->IsNumber()) {
-        Nan::ThrowError("Arguments must be a bit position");
+        Nan::ThrowTypeError("Arguments must be a bit position");
+        return ;
     }
 
     EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
@@ -121,10 +127,14 @@ NAN_METHOD(EWAHBitMap::Unset) {
 NAN_METHOD(EWAHBitMap::ToString) {
     Nan::HandleScope scope;
 
-    if (info.Length() != 1)
-        Nan::ThrowError("Wrong number of arguments");
-    if ((!info[0]->IsString()) || ((info[0]->ToString())->Length() < 1))
-        Nan::ThrowError("Argument should be a non-empty string");
+    if (info.Length() < 1) {
+        Nan::ThrowTypeError("Wrong number of arguments");
+        return ;
+    }
+    if ((!info[0]->IsString()) || ((info[0]->ToString())->Length() < 1)) {
+        Nan::ThrowTypeError("Argument should be a non-empty string");
+        return ;
+    }
 
     Handle<String> delimiter = info[0]->ToString();
     char *strDelimiter = new char[delimiter->Utf8Length()];
@@ -161,10 +171,14 @@ NAN_METHOD(EWAHBitMap::NumberOfOnes) {
 NAN_METHOD(EWAHBitMap::Map) {
     Nan::HandleScope scope;
 
-    if (info.Length()<1)
-        Nan::ThrowError("Wrong number of arguments");
-    if (!info[0]->IsFunction())
-        Nan::ThrowError("Wrong type of arguments (argument shoudld be a function)");
+    if (info.Length() < 1) {
+        Nan::ThrowTypeError("Wrong number of arguments");
+        return ;
+    }
+    if (!info[0]->IsFunction()) {
+        Nan::ThrowTypeError("Wrong type of arguments (argument shoudld be a function)");
+        return ;
+    }
 
     Handle<Array> resultArray = Nan::New<Array>();
     Local<Function> callback = Local<Function>::Cast(info[0]);
@@ -182,10 +196,14 @@ NAN_METHOD(EWAHBitMap::Map) {
 NAN_METHOD(EWAHBitMap::Or) {
     Nan::HandleScope scope;
 
-    if (info.Length() < 1)
-        Nan::ThrowError("Wrong number of arguments");
-    if (!info[0]->IsObject())
-        Nan::ThrowError("Wrong type of argument");
+    if (info.Length() < 1) {
+        Nan::ThrowTypeError("Wrong number of arguments");
+        return ;
+    }
+    if (!info[0]->IsObject()) {
+        Nan::ThrowTypeError("Wrong type of argument");
+        return ;
+    }
 
     EWAHBitMap* rightOperand = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info[0]->ToObject());
     if (rightOperand == NULL)
@@ -203,10 +221,14 @@ NAN_METHOD(EWAHBitMap::Or) {
 NAN_METHOD(EWAHBitMap::And) {
     Nan::HandleScope scope;
 
-    if (info.Length() < 1)
-        Nan::ThrowError("Wrong number of arguments");
-    if (!info[0]->IsObject())
-        Nan::ThrowError("Wrong type of argument");
+    if (info.Length() < 1) {
+        Nan::ThrowTypeError("Wrong number of arguments");
+        return ;
+    }
+    if (!info[0]->IsObject()) {
+        Nan::ThrowTypeError("Wrong type of argument");
+        return ;
+    }
 
     EWAHBitMap* rightOperand = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info[0]->ToObject());
     if (rightOperand == NULL)
@@ -224,10 +246,14 @@ NAN_METHOD(EWAHBitMap::And) {
 NAN_METHOD(EWAHBitMap::Xor) {
     Nan::HandleScope scope;
 
-    if (info.Length() < 1)
-        Nan::ThrowError("Wrong number of arguments");
-    if (!info[0]->IsObject())
-        Nan::ThrowError("Wrong type of argument");
+    if (info.Length() < 1) {
+        Nan::ThrowTypeError("Wrong number of arguments");
+        return ;
+    }
+    if (!info[0]->IsObject()) {
+        Nan::ThrowTypeError("Wrong type of argument");
+        return ;
+    }
 
     EWAHBitMap* rightOperand = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info[0]->ToObject());
     if (rightOperand == NULL)
@@ -280,6 +306,15 @@ NAN_METHOD(EWAHBitMap::Write) {
 NAN_METHOD(EWAHBitMap::Read) {
     Nan::HandleScope scope;
 
+    if (info.Length() < 1) {
+        Nan::ThrowTypeError("Wrong number of arguments");
+        return ;
+    }
+    if (!info[0]->IsObject()) {
+        Nan::ThrowTypeError("Wrong type of argument");
+        return ;
+    }
+    
     Local<Array> input = Local<Array>::Cast(info[0]);
     size_t sizeInBits = Local<Value>::Cast(input->Get(0))->NumberValue();
     size_t bufferSize = Local<Value>::Cast(input->Get(1))->NumberValue();
