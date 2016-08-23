@@ -90,7 +90,7 @@ NAN_METHOD(EWAHBitMap::Set) {
 
     that->getMutableArray().logicalor(tmpObject->getMutableArray(), resultObject->getMutableArray());
 
-    info.GetReturnValue().Set(resultInst);
+    that->setArray(resultObject->getMutableArray());
 }
 
 NAN_METHOD(EWAHBitMap::Unset) {
@@ -120,8 +120,7 @@ NAN_METHOD(EWAHBitMap::Unset) {
     else {
         that->getMutableArray().logicalxor(tmpObject->getMutableArray(), resultObject->getMutableArray());
     }
-
-    info.GetReturnValue().Set(resultInst);
+    that->setArray(resultObject->getMutableArray());
 }
 
 NAN_METHOD(EWAHBitMap::ToString) {
@@ -314,7 +313,7 @@ NAN_METHOD(EWAHBitMap::Read) {
         Nan::ThrowTypeError("Wrong type of argument");
         return ;
     }
-    
+
     Local<Array> input = Local<Array>::Cast(info[0]);
     size_t sizeInBits = Local<Value>::Cast(input->Get(0))->NumberValue();
     size_t bufferSize = Local<Value>::Cast(input->Get(1))->NumberValue();

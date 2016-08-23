@@ -22,6 +22,9 @@ private:
     ewahboolarray& getMutableArray() {
         return boolArray;
     }
+    void setArray(ewahboolarray newBoolArray) {
+        boolArray = newBoolArray;
+    }
 
 public:
     static void Init();
