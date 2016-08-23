@@ -30,6 +30,8 @@ public:
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static v8::Local<v8::Object> NewInstance(v8::Local<v8::Value> arg);
     static NAN_METHOD(Push);
+    static NAN_METHOD(Set);
+    static NAN_METHOD(Unset);
     static NAN_METHOD(ToString);
     static NAN_METHOD(Length);
     static NAN_METHOD(NumberOfOnes);
@@ -40,7 +42,6 @@ public:
     static NAN_METHOD(Not);
     static NAN_METHOD(Write);
     static NAN_METHOD(Read);
-    static NAN_METHOD(Set);
 };
 
 #endif

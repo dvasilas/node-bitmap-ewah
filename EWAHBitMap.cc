@@ -19,6 +19,8 @@ void EWAHBitMap::Init() {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     Nan::SetPrototypeMethod(tpl, "push", Push);
+    Nan::SetPrototypeMethod(tpl, "set", Set);
+    Nan::SetPrototypeMethod(tpl, "unset", Unset);
     Nan::SetPrototypeMethod(tpl, "toString", ToString);
     Nan::SetPrototypeMethod(tpl, "length", Length);
     Nan::SetPrototypeMethod(tpl, "numberOfOnes", NumberOfOnes);
@@ -29,7 +31,6 @@ void EWAHBitMap::Init() {
     Nan::SetPrototypeMethod(tpl, "not", Not);
     Nan::SetPrototypeMethod(tpl, "read", Read);
     Nan::SetPrototypeMethod(tpl, "write", Write);
-    Nan::SetPrototypeMethod(tpl, "set", Set);
 
     constructor_template.Reset(tpl);
     constructor.Reset(tpl->GetFunction());
@@ -76,14 +77,43 @@ NAN_METHOD(EWAHBitMap::Set) {
 
     EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
 
+    Handle<Value> tmpInst = EWAHBitMap::NewInstance(info[0]);
+    EWAHBitMap* tmpObject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(tmpInst->ToObject());
+    tmpObject->set(info[0]->NumberValue());
+
     Handle<Value> resultInst = EWAHBitMap::NewInstance(info[0]);
     EWAHBitMap* resultObject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(resultInst->ToObject());
+
+    that->getMutableArray().logicalor(tmpObject->getMutableArray(), resultObject->getMutableArray());
+
+    info.GetReturnValue().Set(resultInst);
+}
+
+NAN_METHOD(EWAHBitMap::Unset) {
+    Nan::HandleScope scope;
+
+    if (info.Length() < 1) {
+        Nan::ThrowTypeError("Wrong number of arguments");
+    }
+    if (!info[0]->IsNumber()) {
+        Nan::ThrowError("Arguments must be a bit position");
+    }
+
+    EWAHBitMap* that = Nan::ObjectWrap::Unwrap<EWAHBitMap>(info.This());
 
     Handle<Value> tmpInst = EWAHBitMap::NewInstance(info[0]);
     EWAHBitMap* tmpObject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(tmpInst->ToObject());
     tmpObject->set(info[0]->NumberValue());
 
-    that->getMutableArray().logicalor(tmpObject->getMutableArray(), resultObject->getMutableArray());
+    Handle<Value> resultInst = EWAHBitMap::NewInstance(info[0]);
+    EWAHBitMap* resultObject = Nan::ObjectWrap::Unwrap<EWAHBitMap>(resultInst->ToObject());
+
+    if (!that->getImmutableArray().intersects(tmpObject->getImmutableArray())) {
+        that->getMutableArray().logicalor(that->getMutableArray(), resultObject->getMutableArray());
+    }
+    else {
+        that->getMutableArray().logicalxor(tmpObject->getMutableArray(), resultObject->getMutableArray());
+    }
 
     info.GetReturnValue().Set(resultInst);
 }
