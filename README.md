@@ -17,3 +17,10 @@ var Bitmap = require('node-bitmap-ewah');
 
 var bitmap = Bitmap.createObject();
 ```
+
+### API
+* <a href="#ctor"><code><b>createObject()</b></code></a>
+
+<a name="ctor"></a>
+#### createObject()
+<code>createObject()</code> is the main entry point for creating a new compressed bitmap instance.
