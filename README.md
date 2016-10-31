@@ -26,6 +26,9 @@ var bitmap = Bitmap.createObject();
 * <a href="#str"><code><b>toString()</b></code></a>
 * <a href="#len"><code><b>length()</b></code></a>
 * <a href="#ones"><code><b>numberOfOnes()</b></code></a>
+* <a href="#map"><code><b>map()</b></code></a>
+* <a href="#or"><code><b>or()</b></code></a>
+* <a href="#and"><code><b>and()</b></code></a>
 
 <a name="ctor"></a>
 #### createObject()
@@ -54,3 +57,15 @@ var bitmap = Bitmap.createObject();
 <a name="ones"></a>
 #### numberOfOnes()
 <code>numberOfOnes()</code> returns the number of set bits in the bitmap.
+
+<a name="map"></a>
+#### map(callback)
+<code>map()</code> returns an array with the results of calling the `callback` function on each bit positiion that is set.
+
+<a name="or"></a>
+#### or(bitmap)
+<code>or()</code> applies the logical OR between two bitmaps.
+
+<a name="and"></a>
+#### and(bitmap)
+<code>and()</code> applies the logical AND between two bitmaps.
