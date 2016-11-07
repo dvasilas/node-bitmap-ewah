@@ -29,6 +29,9 @@ var bitmap = Bitmap.createObject();
 * <a href="#map"><code><b>map()</b></code></a>
 * <a href="#or"><code><b>or()</b></code></a>
 * <a href="#and"><code><b>and()</b></code></a>
+* <a href="#not"><code><b>not()</b></code></a>
+* <a href="#write"><code><b>write()</b></code></a>
+* <a href="#read"><code><b>read()</b></code></a>
 
 <a name="ctor"></a>
 #### createObject()
@@ -69,3 +72,18 @@ var bitmap = Bitmap.createObject();
 <a name="and"></a>
 #### and(bitmap)
 <code>and()</code> applies the logical AND between two bitmaps.
+
+<a name="not"></a>
+#### not()
+<code>not()</code> applies the logical NOT to a bitmap.
+
+<a name="write"></a>
+#### write()
+<code>write()</code> can be used to store a bitmap to persistent storage. It returns a three element array which contains 
+the bitmap's size in bits (1st position), the size (in words) of the underlying C++ STL vector (2nd positions) and a NodeJS 
+[`Buffer`] (https://nodejs.org/api/buffer.html#buffer_buffer) class object representing the bitmap's content (3rd position).
+
+<a name="read"></a>
+#### read([sizeInBits, bufferSisze, Buffer])
+<code>read()</code> can be used to retriece a bitmap stored in persistent storage. It takes as argument an array of the same 
+format as returned from the <a href="#write"><code><b>write()</b></code></a> function
