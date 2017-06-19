@@ -1,6 +1,7 @@
 # node-bitmap-ewah
-A set of NodeJS bindings for [a compressed bitmap data structure] (https://github.com/lemire/ewahboolarray).
+A set of NodeJS bindings for [a compressed bitmap data structure](https://github.com/lemire/ewahboolarray).
 
+Inspired by [node-ewah](https://github.com/olddaos/node-ewah/) (installation fails due to deprecated use of node-waf).
 
 ### Installation
 ```sh
